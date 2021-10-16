@@ -10,7 +10,8 @@ let config={
         arcade:{
             gravity:{
                 y:1000
-            }
+            },
+            debug:true
         }
     },
     backgroundColor:0xffffcc,
@@ -28,8 +29,13 @@ function preload(){
     this.load.image("ground","Assets/top-ground.png")
     this.load.image("background","Assets/sky.png")
     this.load.spritesheet("dude","Assets/dude.png",{frameWidth:32,frameHeight:48})
+    this.load.image("apple","Assets/apple.png")
 }
+
 function create(){
+
+    console.log("this",this)
+
     var W=game.config.width;
     var H=game.config.height
 
@@ -45,16 +51,41 @@ function create(){
     background.depth=-1
 
     //Adding Player
-    let player=this.physics.add.sprite(100,100,'dude',4)
+    this.player=this.physics.add.sprite(100,100,'dude',4)
 
-
+    //Adding Physics
     this.physics.add.existing(ground,true)
+
     //ground.body.allowGravity=false
     //ground.body.immovable=true;
 
-    this.physics.add.collider(ground,player)
+    //Adding apple
+    let fruits=this.physics.add.group({
+        key:"apple",
+        repeat:5,
+        setScale:{x:0.1,y:0.1},
+        setXY:{x:10,y:0,stepX:100}
+    })
 
+    fruits.children.iterate(function(f){
+        f.setBounce(Phaser.Math.FloatBetween(0.4,0.7))
+    })
+
+    //Creating more platforms
+    let platforms=this.physics.add.staticGroup()
+    platforms.create(600,100,"ground").setScale(2,0.5).refreshBody()
+    platforms.create(400,300,"ground").setScale(2,0.5).refreshBody()
+    platforms.create(130,200,"ground").setScale(2,0.5).refreshBody()
+    platforms.add(ground)
+
+    //Adding bounce and collision
+    this.player.setBounce(0.5)
+    this.physics.add.collider(ground,this.player)
+    this.physics.add.collider(ground,fruits)
+    this.physics.add.collider(platforms,fruits)
+    
 }
+
 function update(){
     
 }
