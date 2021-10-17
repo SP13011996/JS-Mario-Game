@@ -25,6 +25,11 @@ let config={
 
 let game=new Phaser.Game(config)
 
+let player_config={
+    playerSpeed:150,
+    playerJumpSpeed:-500
+}
+
 function preload(){
     this.load.image("ground","Assets/top-ground.png")
     this.load.image("background","Assets/sky.png")
@@ -80,12 +85,30 @@ function create(){
 
     //Adding bounce and collision
     this.player.setBounce(0.5)
-    this.physics.add.collider(ground,this.player)
-    this.physics.add.collider(ground,fruits)
+    this.physics.add.collider(platforms,this.player)
+    //this.physics.add.collider(ground,fruits)
     this.physics.add.collider(platforms,fruits)
+
+    //Adding movements
+    //Keyboards
+    this.cursor=this.input.keyboard.createCursorKeys()
     
 }
 
 function update(){
+    if(this.cursor.left.isDown){
+        this.player.setVelocityX(-player_config.playerSpeed)
+    }
+    else if(this.cursor.right.isDown){
+        this.player.setVelocityX(player_config.playerSpeed)
+    }
+    else{
+        this.player.setVelocityX(0)
+    }
+
+    //Adding jumping
+    if(this.cursor.up.isDown && this.player.body.touching.down){
+        this.player.setVelocityY(player_config.playerJumpSpeed)
+    }
     
 }
