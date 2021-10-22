@@ -35,6 +35,7 @@ function preload(){
     this.load.image("background","Assets/sky.png")
     this.load.spritesheet("dude","Assets/dude.png",{frameWidth:32,frameHeight:48})
     this.load.image("apple","Assets/apple.png")
+    this.load.image("ray","Assets/ray.png")
 }
 
 function create(){
@@ -54,6 +55,32 @@ function create(){
     background.displayWidth=W
     background.displayHeight=H
     background.depth=-1
+
+    //Adding Rays Effect//
+    let rays=[]
+    
+    for(let i=-10;i<10;i++){    
+        let ray=this.add.sprite(W/2,H-128,'ray')
+        ray.setOrigin(0.5,1)
+        ray.alpha=0.2
+        ray.angle=i*20
+        ray.displayHeight=H*1.6
+        ray.depth=-1
+        rays.push(ray)
+    }
+
+    //Tween for ray rotating animation
+    this.tweens.add({
+        targets:rays,
+        props:{
+            angle:{
+                value:"+=20"
+            } 
+        },
+        duration:6000,
+        repeat:-1
+
+    })
 
     //Adding Player
     this.player=this.physics.add.sprite(100,100,'dude',4)    
@@ -121,9 +148,12 @@ function create(){
 
     this.cameras.main.startFollow(this.player,true,true)
     this.cameras.main.setZoom(1.5)
+
+
 }
 
 function update(){
+
     if(this.cursor.left.isDown){
         this.player.setVelocityX(-player_config.playerSpeed)
         this.player.anims.play('left',true)
