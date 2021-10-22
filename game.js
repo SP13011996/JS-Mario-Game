@@ -56,7 +56,7 @@ function create(){
     background.depth=-1
 
     //Adding Player
-    this.player=this.physics.add.sprite(100,100,'dude',4)
+    this.player=this.physics.add.sprite(100,100,'dude',4)    
 
     //Adding Physics
     this.physics.add.existing(ground,true)
@@ -85,6 +85,8 @@ function create(){
 
     //Adding bounce and collision
     this.player.setBounce(0.5)
+    this.player.setCollideWorldBounds(true)
+
     this.physics.add.collider(platforms,this.player)
     //this.physics.add.collider(ground,fruits)
     this.physics.add.collider(platforms,fruits)
@@ -112,6 +114,13 @@ function create(){
         frames:[{key:'dude',frame:4}],
         frameRate:10,        
     })
+
+    //Adding Camera to follow player
+    this.cameras.main.setBounds(0,0,W,H)
+    this.physics.world.setBounds(0,0,W,H)
+
+    this.cameras.main.startFollow(this.player,true,true)
+    this.cameras.main.setZoom(1.5)
 }
 
 function update(){
