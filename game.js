@@ -27,7 +27,7 @@ let game=new Phaser.Game(config)
 
 let player_config={
     playerSpeed:150,
-    playerJumpSpeed:-500
+    playerJumpSpeed:-650
 }
 
 function preload(){
@@ -68,7 +68,7 @@ function create(){
     let fruits=this.physics.add.group({
         key:"apple",
         repeat:5,
-        setScale:{x:0.1,y:0.1},
+        setScale:{x:0.07,y:0.07},
         setXY:{x:10,y:0,stepX:100}
     })
 
@@ -88,22 +88,44 @@ function create(){
     this.physics.add.collider(platforms,this.player)
     //this.physics.add.collider(ground,fruits)
     this.physics.add.collider(platforms,fruits)
+    this.physics.add.overlap(this.player,fruits,eatFruit,null,this)
 
     //Adding movements
     //Keyboards
     this.cursor=this.input.keyboard.createCursorKeys()
-    
+
+    //Animation on player
+    this.anims.create({
+        key:'left',
+        frames:this.anims.generateFrameNumbers('dude',{start:0,end:3}),
+        frameRate:10,
+        repeat:-1
+    })
+    this.anims.create({
+        key:'right',
+        frames:this.anims.generateFrameNumbers('dude',{start:5,end:8}),
+        frameRate:10,
+        repeat:-1
+    })
+    this.anims.create({
+        key:'center',
+        frames:[{key:'dude',frame:4}],
+        frameRate:10,        
+    })
 }
 
 function update(){
     if(this.cursor.left.isDown){
         this.player.setVelocityX(-player_config.playerSpeed)
+        this.player.anims.play('left',true)
     }
     else if(this.cursor.right.isDown){
         this.player.setVelocityX(player_config.playerSpeed)
+        this.player.anims.play('right',true)
     }
     else{
         this.player.setVelocityX(0)
+        this.player.anims.play('center')
     }
 
     //Adding jumping
@@ -111,4 +133,9 @@ function update(){
         this.player.setVelocityY(player_config.playerJumpSpeed)
     }
     
+}
+
+function eatFruit(player,fruit)
+{
+    fruit.disableBody(true,true)
 }
